@@ -24,7 +24,9 @@ h1 {
   width: 100%;
   border-bottom: 1px solid DarkSlateGrey;
 }
-
+table#movies th.hilite{
+  background-color:yellow;
+}
 h1.title {
   margin: 0 0 1em;
   padding: 10px;
@@ -48,9 +50,6 @@ table#movies th {
 table#movies th, table#movies td {
   padding: 4px;
   text-align: left;
-}
-table#movies th.hilite {
-  background-color: yellow;
 }
 #notice #warning {
   background: rosybrown;

@@ -13,12 +13,11 @@ class MoviesController < ApplicationController
     session[:order_by]=@order_by
     session[:ratings]=@s_ratings
     if params[:ratings]==@s_ratings and params[:order_by]==@order_by
-     
+      @movies = Movie.find(:all,:conditions =>{:rating =>  @s_ratings.keys},:order => @order_by)
     else
       flash.keep
       redirect_to movies_path(:order_by => @order_by, :ratings => @s_ratings)
     end
- @movies = Movie.find(:all,:conditions =>{:rating =>  @s_ratings.keys},:order => @order_by)
   end
 
   def new

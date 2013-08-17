@@ -7,14 +7,39 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @all_ratings=['G','PG','PG-13','R']
-    @order_by=params[:order_by]
-    if params[:ratings]
-      @s_ratings=params[:ratings].keys
-    else
-      @s_ratings=@all_ratings
+    redirect = 0
+    @all_ratings = ['G','PG','PG-13','R']
+
+    if session[:ratings].present? && params[:ratings].nil?
+      params[:ratings] = session[:ratings]
+      session.delete(:ratings)
+      redirect = 1      
     end
-    @movies = Movie.find(:all,:conditions =>{:rating =>  @s_ratings},:order => @order_by)
+
+    if session[:sort_by].present? && params[:sort_by].nil?
+      params[:sort_by] = session[:sort_by]
+      session.delete(:sort_by)
+      redirect = 1      
+    end
+    
+    if redirect == 1
+      flash.keep
+      redirect_to movies_path(:ratings => params[:ratings], :sort_by => params[:sort_by])    
+    end
+    
+    rating_filter = params[:ratings] ? params[:ratings].keys : @all_ratings
+    if params[:sort_by]
+      @movies = Movie.order(params[:sort_by]).where('rating IN (?)', rating_filter)
+      @title_class = "hilite" if params[:sort_by] == "title"
+      @release_date_class = "hilite" if params[:sort_by] == "release_date"
+    else
+      @movies = Movie.where('rating IN (?)', rating_filter)
+      @title_class = "non_hilite"
+      @release_date_class = "non_hilite"
+    end
+    @all_ratings.each {|rating| rating_filter.include?(rating) ? flash[rating]= true : flash[rating]= false}
+    session[:ratings] = params[:ratings] if params[:ratings]
+    session[:sort_by] = params[:sort_by] if params[:sort_by] 
   end
 
   def new

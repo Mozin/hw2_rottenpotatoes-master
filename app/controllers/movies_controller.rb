@@ -8,16 +8,13 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings=['G','PG','PG-13','R']
-    @order_by=(params[:order_by])? params[:order_by] : session[:order_by]
-    @s_ratings=(params[:ratings])? params[:ratings] : session[:ratings]
-    session[:order_by]=@order_by
-    session[:ratings]=@s_ratings
-    if params[:ratings]==@s_ratings and params[:order_by]==@order_by
-      @movies = Movie.find(:all,:conditions =>{:rating =>  @s_ratings.keys},:order => @order_by)
+    @order_by=params[:order_by]
+    if params[:ratings]
+      @s_ratings=params[:ratings].keys
     else
-      flash.keep
-      redirect_to movies_path(:order_by => @order_by, :ratings => @s_ratings)
+      @s_ratings=@all_ratings
     end
+    @movies = Movie.find(:all,:conditions =>{:rating =>  @s_ratings},:order => @order_by)
   end
 
   def new
